@@ -1,0 +1,55 @@
+
+import platform
+import shutil
+import os
+from datetime import datetime
+
+
+def get_system_info():
+    disk = shutil.disk_usage(os.path.abspath(os.sep))
+
+    return {
+        "Computer Name": platform.node(),
+        "Operating System": platform.system(),
+        "OS Version": platform.release(),
+        "Architecture": platform.machine(),
+        "Processor": platform.processor() or "Not reported",
+        "Python Version": platform.python_version(),
+        "Disk Total (GB)": round(disk.total / (1024 ** 3), 2),
+        "Disk Used (GB)": round(disk.used / (1024 ** 3), 2),
+        "Disk Free (GB)": round(disk.free / (1024 ** 3), 2),
+    }
+
+
+def main():
+    info = get_system_info()
+
+    report = [
+        "=" * 40,
+        "       PC DIAGNOSTIC REPORT",
+        "=" * 40,
+        f"Generated: {datetime.now():%Y-%m-%d %H:%M:%S}",
+        "",
+    ]
+
+    for name, value in info.items():
+        report.append(f"{name}: {value}")
+
+    report.extend([
+        "",
+        "Basic system information report.",
+        "This tool does not repair hardware.",
+        "=" * 40,
+    ])
+
+    output = "\n".join(report)
+    print(output)
+
+    with open("diagnostic_report.txt", "w", encoding="utf-8") as file:
+        file.write(output)
+
+    print("\nReport saved successfully!")
+
+
+if __name__ == "__main__":
+    main()
